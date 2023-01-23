@@ -7,6 +7,7 @@ import Signin from "./signin";
 import Register from "./register";
 import Voting from "./voting";
 import Admin from "./admin";
+
 const router = createBrowserRouter([
   {
     path: "/",

@@ -1,6 +1,20 @@
+import { Button, Form, Input } from "antd";
+import axios from "axios";
 import React from "react";
-import { Link } from "react-router-dom";
+
 export default function Register() {
+  const [form] = Form.useForm();
+
+  async function handleSubmit() {
+    let user = await axios.post("http://localhost:2000/register", {
+      username: form.getFieldValue("username"),
+      ssn: form.getFieldValue("ssn"),
+      password: form.getFieldValue("password"),
+      role: "user",
+    });
+    console.log(user);
+  }
+
   return (
     <div>
       <div className="flex flex-col items-center min-h-screen pt-6 sm:justify-center sm:pt-0 bg-gray-50">
@@ -12,79 +26,93 @@ export default function Register() {
           </a>
         </div>
         <div className="w-full px-6 py-4 mt-6 overflow-hidden bg-white shadow-md sm:max-w-md sm:rounded-lg">
-          <form>
-            <div>
-              <label
-                htmlFor="name"
-                className="block text-sm font-medium text-gray-700 undefined"
-              >
-                Name
-              </label>
-              <div className="flex flex-col items-start">
-                <input
-                  type="text"
-                  name="name"
-                  className="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                />
-              </div>
-            </div>
-            <div className="mt-4">
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-gray-700 undefined"
-              >
-                SSN
-              </label>
-              <div className="flex flex-col items-start">
-                <input
-                  type="email"
-                  name="email"
-                  className="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                />
-              </div>
-            </div>
-            <div className="mt-4">
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-gray-700 undefined"
-              >
-                Password
-              </label>
-              <div className="flex flex-col items-start">
-                <input
-                  type="password"
-                  name="password"
-                  className="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                />
-              </div>
-            </div>
-            <div className="mt-4">
-              <label
-                htmlFor="password_confirmation"
-                className="block text-sm font-medium text-gray-700 undefined"
-              >
-                Confirm Password
-              </label>
-              <div className="flex flex-col items-start">
-                <input
-                  type="password"
-                  name="password_confirmation"
-                  className="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                />
-              </div>
-            </div>
-            <div className="flex items-center justify-end mt-4">
-              <a className="font-medium text-purple-600 hover:underline">
-                <Link to={"/signin"}>Already registered?</Link>
-              </a>
-              <button
-                type="submit"
-                className="inline-flex items-center px-4 py-2 ml-4 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-purple-700 border border-transparent rounded-md active:bg-gray-900 false"
-              >
-                <Link to={"/voting"}>Register</Link>
-              </button>
-            </div>
-          </form>
+          <Form
+            labelCol={{
+              span: 8,
+            }}
+            wrapperCol={{
+              span: 16,
+            }}
+            form={form}
+            onFinish={handleSubmit}
+          >
+            <Form.Item
+              label="Username"
+              name="username"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your username!",
+                },
+              ]}
+            >
+              <Input type="text" />
+            </Form.Item>
+            <Form.Item
+              label="SSN"
+              name="ssn"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your SSN!",
+                  max: 10,
+                  min: 10,
+                },
+                {
+                  len: 10,
+                  message: "SSN must be 10 digits!",
+                },
+              ]}
+            >
+              <Input type="text" />
+            </Form.Item>
+            <Form.Item
+              label="Password"
+              name="password"
+              hasFeedback
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your password!",
+                },
+              ]}
+            >
+              <Input type="password" />
+            </Form.Item>
+            <Form.Item
+              label="Confirm Password"
+              name="confirmPassword"
+              required
+              dependencies={["password"]}
+              hasFeedback
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your password!",
+                },
+                ({ getFieldValue }) => ({
+                  validator(_, value) {
+                    if (!value || getFieldValue("password") === value) {
+                      return Promise.resolve();
+                    }
+
+                    return Promise.reject(
+                      new Error(
+                        "The two passwords that you entered do not match!"
+                      )
+                    );
+                  },
+                }),
+              ]}
+            >
+              <Input type="password" />
+            </Form.Item>
+            <Form.Item>
+              <Button type="primary" htmlType="submit">
+                Submit
+              </Button>
+            </Form.Item>
+          </Form>
         </div>
       </div>
     </div>

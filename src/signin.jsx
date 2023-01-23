@@ -1,6 +1,28 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import axios from "axios";
+
 export default function Signin() {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const { from } = location.state || { from: "user" };
+
+  async function handleSubmit(event) {
+    event.preventDefault();
+    const data = await axios.post("localhost:8080/login", {
+      username: event.target.username.value,
+      password: event.target.password.value,
+    });
+
+    if (data) {
+      navigate(from == "user" ? "/user" : "/admin");
+    }
+
+    console.log(data);
+  }
+
   return (
     <div className="relative flex flex-col justify-center min-h-screen overflow-hidden">
       <div className="w-full p-6 m-auto bg-pink-50 rounded-md shadow-md lg:max-w-xl">
@@ -10,13 +32,13 @@ export default function Signin() {
         <form className="mt-6">
           <div className="mb-2">
             <label
-              for="email"
+              for="username"
               className="block text-sm font-semibold text-gray-800"
             >
-              Email*
+              Username*
             </label>
             <input
-              type="email"
+              type="text"
               className="block w-full px-4 py-2 mt-2 text-purple-700 bg-white border rounded-md focus:border-purple-400 focus:ring-purple-300 focus:outline-none focus:ring focus:ring-opacity-40"
             />
           </div>
@@ -32,12 +54,13 @@ export default function Signin() {
               className="block w-full px-4 py-2 mt-2 text-purple-700 bg-white border rounded-md focus:border-purple-400 focus:ring-purple-300 focus:outline-none focus:ring focus:ring-opacity-40"
             />
           </div>
-          <a href="#" className="text-xs text-purple-600 hover:underline">
-            Forget Password?
-          </a>
+
           <div className="mt-6">
-            <button className="w-full px-4 py-2 tracking-wide text-white transition-colors duration-200 transform bg-purple-700 rounded-md hover:bg-purple-600 focus:outline-none focus:bg-purple-600">
-              <Link to={"/voting"}>Login</Link>
+            <button
+              onClick={handleSubmit}
+              className="w-full px-4 py-2 tracking-wide text-white transition-colors duration-200 transform bg-purple-700 rounded-md hover:bg-purple-600 focus:outline-none focus:bg-purple-600"
+            >
+              Sign in
             </button>
           </div>
         </form>
