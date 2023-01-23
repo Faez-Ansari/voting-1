@@ -1,26 +1,30 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useLocation, useNavigate } from "react-router-dom";
+import { Form, Input, message } from "antd";
 import axios from "axios";
 
 export default function Signin() {
   const location = useLocation();
   const navigate = useNavigate();
+  const [form] = Form.useForm();
 
   const { from } = location.state || { from: "user" };
 
-  async function handleSubmit(event) {
-    event.preventDefault();
-    const data = await axios.post("localhost:8080/login", {
-      username: event.target.username.value,
-      password: event.target.password.value,
-    });
+  async function handleSubmit() {
+    console.log("from", from);
+    try {
+      let user = await axios.post("http://localhost:2000/login", {
+        username: form.getFieldValue("username"),
+        password: form.getFieldValue("password"),
+      });
 
-    if (data) {
-      navigate(from == "user" ? "/user" : "/admin");
+      if (user) {
+        navigate(from == "user" ? "/voting" : "/admin");
+      }
+    } catch (e) {
+      message.error("Invalid username or password");
     }
-
-    console.log(data);
   }
 
   return (
@@ -29,41 +33,43 @@ export default function Signin() {
         <h1 className="text-3xl font-semibold text-center text-purple-700 underline">
           Sign in
         </h1>
-        <form className="mt-6">
-          <div className="mb-2">
-            <label
-              for="username"
-              className="block text-sm font-semibold text-gray-800"
-            >
-              Username*
-            </label>
-            <input
-              type="text"
-              className="block w-full px-4 py-2 mt-2 text-purple-700 bg-white border rounded-md focus:border-purple-400 focus:ring-purple-300 focus:outline-none focus:ring focus:ring-opacity-40"
-            />
-          </div>
-          <div className="mb-2">
-            <label
-              for="password"
-              className="block text-sm font-semibold text-gray-800"
-            >
-              Password*
-            </label>
-            <input
-              type="password"
-              className="block w-full px-4 py-2 mt-2 text-purple-700 bg-white border rounded-md focus:border-purple-400 focus:ring-purple-300 focus:outline-none focus:ring focus:ring-opacity-40"
-            />
-          </div>
+        <Form form={form} onFinish={handleSubmit} className="mt-6">
+          <Form.Item
+            rules={[
+              {
+                required: true,
+                message: "Please input your username!",
+              },
+            ]}
+            label="Username"
+            name="username"
+            className="mb-2"
+          >
+            <Input type="text" className="" />
+          </Form.Item>
+          <Form.Item
+            rules={[
+              {
+                required: true,
+                message: "Please input your password!",
+              },
+            ]}
+            label="Password"
+            name="password"
+            className="mb-2"
+          >
+            <Input type="password" />
+          </Form.Item>
 
-          <div className="mt-6">
+          <Form.Item>
             <button
-              onClick={handleSubmit}
+              htmlFor="submit"
               className="w-full px-4 py-2 tracking-wide text-white transition-colors duration-200 transform bg-purple-700 rounded-md hover:bg-purple-600 focus:outline-none focus:bg-purple-600"
             >
               Sign in
             </button>
-          </div>
-        </form>
+          </Form.Item>
+        </Form>
 
         <p className="mt-8 text-xs font-light text-center text-gray-700">
           {" "}
