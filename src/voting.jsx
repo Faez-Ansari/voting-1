@@ -12,9 +12,7 @@ export default function Voting() {
   useEffect(() => {
     axios
       .get("http://localhost:2000/login", {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("id_token")}`,
-        },
+        withCredentials: true,
       })
       .catch((err) => {
         if (err.response.status === 401) {

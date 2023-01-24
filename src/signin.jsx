@@ -13,10 +13,16 @@ export default function Signin() {
 
   async function handleSubmit() {
     try {
-      let user = await axios.post("http://localhost:2000/login", {
-        username: form.getFieldValue("username"),
-        password: form.getFieldValue("password"),
-      });
+      let user = await axios.post(
+        "http://localhost:2000/login",
+        {
+          username: form.getFieldValue("username"),
+          password: form.getFieldValue("password"),
+        },
+        {
+          withCredentials: true,
+        }
+      );
 
       localStorage.setItem("id_token", user.data.accessToken);
 
