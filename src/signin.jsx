@@ -12,15 +12,22 @@ export default function Signin() {
   const { from } = location.state || { from: "user" };
 
   async function handleSubmit() {
-    console.log("from", from);
     try {
       let user = await axios.post("http://localhost:2000/login", {
         username: form.getFieldValue("username"),
         password: form.getFieldValue("password"),
       });
 
-      if (user) {
-        navigate(from == "user" ? "/voting" : "/admin");
+      localStorage.setItem("id_token", user.data.accessToken);
+
+      if (from === "admin") {
+        if (user.data.role === "admin") {
+          navigate("/admin");
+        } else {
+          message.error("You are not an admin");
+        }
+      } else {
+        navigate("/voting");
       }
     } catch (e) {
       message.error("Invalid username or password");

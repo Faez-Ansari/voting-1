@@ -1,19 +1,25 @@
-import { Button, Form, Input } from "antd";
+import { Button, Form, Input, message } from "antd";
 import axios from "axios";
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Register() {
   const [form] = Form.useForm();
+  const navigate = useNavigate();
 
   async function handleSubmit() {
-    let user = await axios.post("http://localhost:2000/register", {
-      username: form.getFieldValue("username"),
-      ssn: form.getFieldValue("ssn"),
-      password: form.getFieldValue("password"),
-      role: "user",
-    });
-    console.log(user);
+    try {
+      let user = await axios.post("http://localhost:2000/register", {
+        username: form.getFieldValue("username"),
+        ssn: form.getFieldValue("ssn"),
+        password: form.getFieldValue("password"),
+        role: "user",
+      });
+      navigate("/voting");
+    } catch (e) {
+      console.log(e);
+      message.error(`${e.response.data.message[0]} already exists`);
+    }
   }
 
   return (

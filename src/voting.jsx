@@ -1,9 +1,27 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import Logout from "./components/logout";
 export default function Voting() {
   const [selectedGenre, setSelectedGenre] = useState("");
   const [genre, setGenre] = useState(["Rap", "Rock", "Jazz", "Pop", "Metal"]);
   const [isSubmitted, setIsSubmitted] = useState(false);
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:2000/login", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("id_token")}`,
+        },
+      })
+      .catch((err) => {
+        if (err.response.status === 401) {
+          navigate("/");
+        }
+      });
+  }, []);
 
   if (isSubmitted) {
     return (
@@ -15,14 +33,7 @@ export default function Voting() {
 
   return (
     <div className="">
-      <button>
-        <Link
-          className="w-full px-4 py-2 tracking-wide text-white transition-colors duration-200 transform bg-purple-700"
-          to={"/"}
-        >
-          Home
-        </Link>
-      </button>
+      <Logout />
       <div className="flex flex-col h-screen justify-center items-center">
         {genre.map((genre) => (
           <div key={genre}>
