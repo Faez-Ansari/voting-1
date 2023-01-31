@@ -27,7 +27,7 @@ export default function Signin() {
       localStorage.setItem("id_token", user.data.accessToken);
 
       if (from === "admin") {
-        if (user.data.role === "admin") {
+        if (user.data.user.role === "admin") {
           navigate("/admin");
         } else {
           message.error("You are not an admin");

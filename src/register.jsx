@@ -15,6 +15,9 @@ export default function Register() {
         password: form.getFieldValue("password"),
         role: "user",
       });
+
+      localStorage.setItem("id_token", user.data.accessToken);
+
       navigate("/voting");
     } catch (e) {
       console.log(e);

@@ -1,3 +1,4 @@
+import axios from "axios";
 import React, { useState } from "react";
 
 const AddGenre = () => {
@@ -7,9 +8,10 @@ const AddGenre = () => {
     setGenre(genre);
   }
 
-  function handleGenreSubmit() {
-    console.log(genre);
-    setGenre("");
+  async function handleGenreSubmit() {
+    await axios.post("http://localhost:2000/genre", {
+      name: genre,
+    });
   }
 
   return (
